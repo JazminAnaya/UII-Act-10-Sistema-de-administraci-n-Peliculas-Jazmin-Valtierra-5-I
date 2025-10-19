@@ -1,0 +1,121 @@
+{% extends "pelicula/base.html" %}
+
+{% block body %}
+<h3 class="m-4">Todas las Películas</h3>
+<div class="row">
+  <div class="col-12">
+    {% if peliculas %}
+      <div class="card bg-light ms-4 me-4 mb-4">
+        <div class="card-header">
+          <i class="fa-solid fa-film fa-lg"></i> Registros de Películas
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Id Película</th>
+                  <th scope="col">Título</th>
+                  <th scope="col">Género</th>
+                  <th scope="col">Duración</th>
+                  <th scope="col">Clasificación</th>
+                  <th scope="col">Sinopsis</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for pelicula in peliculas %}
+                  <tr>
+                    <td>{{ pelicula.id_pelicula }}</td>
+                    <td>{{ pelicula.titulo_pelicula }}</td>
+                    <td>{{ pelicula.genero }}</td>
+                    <td>{{ pelicula.duracion }}</td>
+                    <td>{{ pelicula.clasificacion }}</td>
+                    <td>{{ pelicula.sinopsis }}</td>
+                    <td>
+                      <div class="d-flex">
+                        <!-- Botón info -->
+                        <button type="button" class="btn btn-success me-1" data-bs-toggle="modal" data-bs-target="#infoModal{{ pelicula.id_pelicula }}">
+                          <i class="fa-solid fa-circle-info fa-lg"></i>
+                        </button>
+
+                        <!-- Botón Editar -->
+                        <a class="btn btn-warning me-1" href="{% url 'edit' pelicula.id_pelicula %}">
+                          <i class="fa-solid fa-pen-to-square fa-lg"></i>
+                        </a>
+
+                        <!-- Botón Eliminar -->
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ pelicula.id_pelicula }}">
+                          <i class="fa-solid fa-trash-can fa-lg"></i>
+                        </button>
+                      </div>
+
+                      <!-- Modal de detalles (Info) -->
+                      <div class="modal fade" id="infoModal{{ pelicula.id_pelicula }}" tabindex="-1" aria-labelledby="infoLabel{{ pelicula.id_pelicula }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="infoLabel{{ pelicula.id_pelicula }}">
+                                Película: {{ pelicula.titulo_pelicula }}
+                              </h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                              <ul class="list-unstyled">
+                                <li><strong>ID:</strong> {{ pelicula.id_pelicula }}</li>
+                                <li><strong>Título:</strong> {{ pelicula.titulo_pelicula }}</li>
+                                <li><strong>Género:</strong> {{ pelicula.genero }}</li>
+                                <li><strong>Duración:</strong> {{ pelicula.duracion }}</li>
+                                <li><strong>Clasificación:</strong> {{ pelicula.clasificacion }}</li>
+                                <li><strong>Sinopsis:</strong> {{ pelicula.sinopsis }}</li>
+                              </ul>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Modal Confirmar Delete -->
+                      <div class="modal fade" id="deleteModal{{ pelicula.id_pelicula }}" tabindex="-1" aria-labelledby="deleteLabel{{ pelicula.id_pelicula }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="deleteLabel{{ pelicula.id_pelicula }}">
+                                Eliminar Película
+                              </h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                              <p>¿Estás seguro de eliminar esta película?</p>
+                            </div>
+                            <div class="modal-footer">
+                              <form action="{% url 'delete' pelicula.id_pelicula %}" method="POST">
+                                {% csrf_token %}
+                                <input type="submit" class="btn btn-danger" value="Eliminar">
+                              </form>
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="7" class="text-center text-muted">No hay películas registradas.</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <h5 class="alert alert-primary ms-4 me-4">No hay películas registradas</h5>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
